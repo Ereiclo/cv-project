@@ -36,3 +36,23 @@
     transform: rotate(360deg);
   }
 }
+
+
+.experience-section{
+  margin-top:20px;
+}
+
+
+.form {
+  margin-top: 25px;
+}
+
+input[type='file']{
+  display:none;
+}
+
+.experience-information-cv,
+.experience-information
+{
+  margin-top:20px;
+}
