@@ -1,7 +1,7 @@
 import ExperienceCV from "./ExperienceCV";
 
 function CV(props) {
-  let { user_information, experience } = props;
+  let { userInformation:user_information, experience } = props;
 
   return (
     <div className="user-information">

@@ -1,7 +1,7 @@
 import uniqid from "uniqid";
 import ExperienceSection from "./components/ExperienceSection";
 import "./App.css";
-import { Component } from "react";
+import { useState } from "react";
 import UserSection from "./components/UserSection";
 import CV from "./components/CV";
 
@@ -92,17 +92,12 @@ function createForm(data) {
   return { id: uniqid(), data };
 }
 
-class App extends Component {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      user_information: createUserFields(),
-      experience: [createForm(createExperienceFields())],
-    };
-  }
+function App(props){
+  let [userInformation,setUserInformation] = useState(createUserFields());
+  let [experience,setExperience] = useState([createForm(createExperienceFields())]);
 
-  onUserInformationChange = (e, name) => {
+  const onUserInformationChange = (e, name) => {
     let new_value = e.currentTarget.value;
     let tipo = e.currentTarget.type;
 
@@ -111,70 +106,85 @@ class App extends Component {
       new_value = URL.createObjectURL(file);
     }
 
-    this.setState({
-      user_information: this.state.user_information.map((field) => {
+    setUserInformation(
+      userInformation.map((field) => {
         return field.name === name
           ? { ...field, [tipo === "file" ? "src_value" : "value"]: new_value }
           : field;
-      }),
-    });
+      })
+    );
   };
 
-  onStateChange = (state_name, id, e, name) => {
+  const onExperienceChange = (state_name,id, e, name) => {
     let new_value = e.currentTarget.value;
-    let state = this.state;
-    let new_fields = state[state_name]
+    let new_fields = experience 
       .find((elem) => elem.id === id)
       .data.map((field) => {
         return field.name === name ? { ...field, value: new_value } : field;
       });
 
-    this.setState({
-      [state_name]: state[state_name].map((elem) => {
+    setExperience(
+      experience.map((elem) => {
         return elem.id === id ? { ...elem, data: new_fields } : elem;
       }),
-    });
+    );
   };
 
-  onRemoveState = (state_name, id, e) => {
-    let state = this.state;
-    let new_array = state[state_name]
+  const onRemoveState = (state_name,id, e) => {
+    // let state = this.state;
+    let new_array = experience 
       .filter((elem) => elem.id !== id)
 
-    this.setState({
-      [state_name]: new_array 
-      });
+    setExperience(new_array);
   };
 
 
-
-  createNewExperience = () => {
-    this.setState({
-      experience: this.state.experience.concat(createForm(createExperienceFields()))
-    })
+  const createNewExperience = () => {
+    setExperience(experience.concat(createForm(createExperienceFields())))
   }
 
-  render() {
-    let { user_information,experience } = this.state;
-    // let {src_value} = user_information.find((field) => field.name === 'photo');
-    return (
+
+  return (
       <div className="app">
         <UserSection
-          data={user_information}
-          onInputChange={this.onUserInformationChange}
+          data={userInformation}
+          onInputChange={onUserInformationChange}
         />
         <ExperienceSection 
           state_name='experience' 
           data={experience}
-          onInputChange={this.onStateChange}
-          createNewExperience={this.createNewExperience}
-          onRemove={this.onRemoveState}
+          onInputChange={onExperienceChange}
+          createNewExperience={createNewExperience}
+          onRemove={onRemoveState}
         />
-        <CV {...this.state}/>
+        <CV {...{userInformation,experience}}/>
       </div>
     );
-  }
+
 }
+
+// class App extends Component {
+//   constructor(props) {
+//     super(props);
+
+//     this.state = {
+//       user_information: createUserFields(),
+//       experience: [createForm(createExperienceFields())],
+//     };
+//   }
+
+  
+
+  
+
+  
+
+//   render() {
+//     let { user_information,experience } = this.state;
+//     // let {src_value} = user_information.find((field) => field.name === 'photo');
+    
+//   }
+// }
 
 export default App;
 
